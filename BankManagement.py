@@ -5,6 +5,14 @@ class Account:
         self.number = number
         self.name = name
         self.balance = balance
+    def __str__(self):
+       return (
+        f"----------------------\n"
+        f"Account Holder : {self.name}\n"
+        f"Number : {self.number}\n"
+        f"Balance : {self.balance}\n"
+        f"-----------------------\n"
+       )
     def deposit(self,amount):
         self.balance += amount
         print(f"Available Balance after depositing {amount} : {self.balance}")
@@ -23,43 +31,56 @@ class Bank:
     def create_account(self):
         name = input("Enter a name : ")
         number = int(input("Enter Account Number : "))
+        account = self.find_acount(number)
+        if account is not None:
+            print("Account Number already exist!")
+            return
         balance = int(input("Enter Account Balance : "))
         account = Account(number,name,balance)
         self.accounts.append(account)
         print("Account Created Successfully")
-
+    def find_acount(self,number):
+        for i in self.accounts:
+            if number == i.number:
+                return i
+        return None
     def deposit(self):
         amount = int(input("Enter an amount to deposit : "))
         Number = int(input("Enter the account NUmber : "))
-        for i in self.accounts:
-            if Number == i.number:
-                return i.deposit(amount)
+        account = self.find_acount(Number)
+        if account is None:
             print("Invalid Account Number!")
+            return
+        account.deposit(amount)
     def Withdraw(self):
         amount = int(input("Enter an amount to withdraw : "))
         Number = int(input("Enter the account Number : "))
-        for i in self.accounts:
-            if Number == i.number:
-                try:
-                    return i.withdraw(amount)
-                except NotEnoughBalance as e:
-                    print(e)
+        account = self.find_acount(Number)
+        if account is None:
             print("Invalid Account Number!")
+            return
+        try:
+            return account.withdraw(amount)
+        except NotEnoughBalance as e:
+            print(e)
 
     def check_balance(self):
         Number = int(input("Enter the account Number : "))
-        for i in self.accounts:
-            if Number == i.number:
-                return i.check_balance()
+        account = self.find_acount(Number)
+        if account is None:
             print("Invalid Account Number!")
+            return
+        account.check_balance()
     def All_accounts(self):
-        print(self.accounts)
+        for i in self.accounts:
+            print(i)
     
 bank = Bank()
 menu = ["1. Create an Account", "2. Deposit", "3. Withdraw", "4. Check Balance", "5. Show All Accounts", "6. Exit"]
 while(True):
     print("------>> Menu <<---------")
-    print(menu)
+    for item in menu:
+        print(item)
     choose = int(input("Choose from Menu : "))
     if choose == 1:
         bank.create_account()
